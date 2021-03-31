@@ -18,7 +18,7 @@
 
 // set the dimensions and margins of the graph
 var margin = {top: 20, right: 20, bottom: 50, left: 70},
-    width = 960 - margin.left - margin.right,
+    width = 1000 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
 // parse the date / time
@@ -45,26 +45,28 @@ var svg = d3.select("body").append("svg")
           "translate(" + margin.left + "," + margin.top + ")");
 
 // Get the data
-d3.csv("https://covid.ourworldindata.org/data/owid-covid-data.csv").then(function(data) {
+d3.csv("https://covid.ourworldindata.org/data/owid-covid-data.csv").then(data => {
 var grouped_data = d3.group(data, d => d.location);
 //console.log(grouped_data);
   // format the data
-  grouped_data.get("Netherlands").forEach(function(d) {
+  grouped_data = grouped_data.get("Netherlands")
+  grouped_data.forEach(function(d) {
       //d = d3.group(d, d => d.location);
       //console.log(d);
       d.date = parseTime(d.date);
-     //console.log(d.date.toDateString());
+      //console.log(d.date);
       d.new_cases = +d.new_cases;
       //console.log(d.new_cases);
   });
 
+  data
   // Scale the range of the data
-  x.domain(d3.extent(data, function(d) { return d.date; }));
-  y.domain([0, d3.max(data, function(d) { return d.new_cases; })]);
-
+  x.domain(d3.extent(grouped_data, function(d) { return d.date; }));
+  y.domain([0, d3.max(grouped_data, function(d) { return d.new_cases; })]);
+  //console.log(grouped_data);
   // Add the valueline path.
   svg.append("path")
-      .data([data])
+      .data([grouped_data])
       .attr("class", "line")
       .attr("d", valueline);
 
